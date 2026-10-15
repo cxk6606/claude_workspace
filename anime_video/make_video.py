@@ -109,10 +109,10 @@ def bezier_strand(p0, p1, p2, p3, w0, w1, n=22):
     return pts_l + pts_r[::-1]
 
 
-def draw_character(d, t, gx, gy, light):
+def draw_character(d, t, gx, gy, light, K=1.0):
     """Girl seen from behind, hair and scarf blowing in the wind. Coordinates in base px (scaled by SS)."""
-    S = SS
-    def P(x, y): return ((gx + x) * S, (gy + y) * S)
+    S = SS * K
+    def P(x, y): return (gx * SS + x * S, gy * SS + y * S)
     wind = 0.75 + 0.25 * math.sin(t * 1.7)
     sway = lambda ph, amp: math.sin(t * 3.1 + ph) * amp * wind
 
@@ -136,7 +136,7 @@ def draw_character(d, t, gx, gy, light):
     d.polygon(sk, fill=(36, 38, 92))
     for i in range(1, 7):
         xx = 24 - i * 8
-        d.line([P(lerp(-20, 20, i / 7), -40), P(xx + sway(i, 3), 5)], fill=(54, 58, 128), width=2 * S)
+        d.line([P(lerp(-20, 20, i / 7), -40), P(xx + sway(i, 3), 5)], fill=(54, 58, 128), width=int(2 * S))
     # torso (sailor top)
     d.polygon([P(-19, -42), P(19, -42), P(16, -104), P(-16, -104)], fill=uniform)
     d.polygon([P(-16, -104), P(16, -104), P(12, -94), P(-12, -94)], fill=uniform_hi)
@@ -183,7 +183,7 @@ def draw_character(d, t, gx, gy, light):
     # head crown & bangs edge highlight
     d.pieslice([P(-22, -174)[0], P(-22, -174)[1], P(22, -122)[0], P(22, -122)[1]], 200, 340, fill=hair_mid)
     d.arc([P(-24, -176)[0], P(-24, -176)[1], P(24, -118)[0], P(24, -118)[1]], 205, 335,
-          fill=(255, 220, 190), width=2 * S)
+          fill=(255, 220, 190), width=int(2 * S))
     # ears peek
     d.ellipse([P(-26, -140)[0], P(-26, -140)[1], P(-19, -130)[0], P(-19, -130)[1]], fill=skin)
     # ribbon
@@ -199,7 +199,7 @@ def draw_character(d, t, gx, gy, light):
         p3 = P(rx + 60 + k * 12, ry + 14 + sway(k + 2, 14))
         d.polygon(bezier_strand(p0, p1, p2, p3, 7 * S, 2 * S), fill=(255, 120, 150))
     # rim light along back-left of hair/body facing the rising sun (right side)
-    d.line([P(22, -150), P(24, -128)], fill=rim + (255,), width=2 * S) if False else None
+    d.line([P(22, -150), P(24, -128)], fill=rim + (255,), width=int(2 * S)) if False else None
 
 
 def petal_shape(d, x, y, s, rot, col):
